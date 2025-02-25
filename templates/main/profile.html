@@ -1,0 +1,50 @@
+{% extends 'main/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">Создать новую заявку</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button class="btn btn-primary btn-block" type="submit">Отправить заявку</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <h2>Ваши заявки</h2>
+        {% if requests %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Статус</th>
+                            <th>Дата</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in requests %}
+                            <tr>
+                                <td>{{ request.title }}</td>
+                                <td>
+                                    <span class="badge badge-{% if request.status == 'new' %}primary{% elif request.status == 'in_progress' %}warning{% elif request.status == 'completed' %}success{% else %}danger{% endif %}">
+                                        {{ request.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>{{ request.created_date|date:"M d, Y" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">У вас пока нет заявок.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

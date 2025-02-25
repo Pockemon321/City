@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сделаем лучше вместе!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <audio id="notificationSound" src="/static/media/Notif.mp3" preload="auto"></audio>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <img src="/static/images/logo.png" alt="Логотип" height="40">
+                    Сделаем лучше вместе!
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'profile' %}">Мои заявки</a>
+                            </li>
+                            {% if user.is_staff %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'admin_dashboard' %}">Админ-панель</a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-link nav-link">Выйти</button>
+                                </form>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'login' %}">Войти</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mt-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span>&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer mt-5 py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted"> 2025 Сделаем лучше вместе! Все права защищены.</span>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+    function playNotification() {
+        document.getElementById('notificationSound').play();
+    }
+
+    // Анимация карточек с проблемами
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.problem-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                const beforeImage = this.querySelector('.problem-before');
+                if (beforeImage) {
+                    beforeImage.style.opacity = '1';
+                }
+            });
+            card.addEventListener('mouseleave', function() {
+                const beforeImage = this.querySelector('.problem-before');
+                if (beforeImage) {
+                    beforeImage.style.opacity = '0';
+                }
+            });
+        });
+    });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,63 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="jumbotron text-center bg-white shadow-sm rounded">
+    <h1 class="display-4">Сделаем лучше вместе!</h1>
+    <p class="lead">Помогите сделать наш город лучше - сообщите о проблемах благоустройства</p>
+    
+    <div class="request-counter mb-4" id="requestCounter">
+        <h3>Решено проблем:</h3>
+        <div class="counter-number" id="solvedCount">{{ solved_count }}</div>
+    </div>
+
+    {% if user.is_authenticated %}
+        <a class="btn btn-primary btn-lg" href="{% url 'profile' %}" role="button">Создать заявку</a>
+    {% else %}
+        <div class="mt-4">
+            <a class="btn btn-primary btn-lg mr-2" href="{% url 'login' %}" role="button">Войти</a>
+            <a class="btn btn-success btn-lg" href="{% url 'register' %}" role="button">Регистрация</a>
+        </div>
+    {% endif %}
+</div>
+
+{% if solved_requests %}
+    <h2 class="text-center mt-5 mb-4">Недавно решенные проблемы</h2>
+    <div class="solved-problems">
+        {% for request in solved_requests %}
+            <div class="problem-card">
+                <img src="{{ request.after_image.url }}" alt="После" class="problem-image">
+                <img src="{{ request.before_image.url }}" alt="До" class="problem-image problem-before">
+                <div class="problem-info p-3">
+                    <h5>{{ request.title }}</h5>
+                    <p class="mb-1">{{ request.category.name }}</p>
+                    <small class="text-muted">{{ request.created_date|date:"d.m.Y" }}</small>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function updateSolvedCount() {
+    fetch('/get-solved-count/')
+        .then(response => response.json())
+        .then(data => {
+            const oldCount = parseInt(document.getElementById('solvedCount').textContent);
+            const newCount = data.count;
+            if (newCount > oldCount) {
+                playNotification();
+                document.getElementById('solvedCount').textContent = newCount;
+                document.getElementById('requestCounter').classList.add('animate__animated', 'animate__bounce');
+                setTimeout(() => {
+                    document.getElementById('requestCounter').classList.remove('animate__animated', 'animate__bounce');
+                }, 1000);
+            }
+        });
+}
+
+// Обновление счетчика каждые 5 секунд
+setInterval(updateSolvedCount, 5000);
+</script>
+{% endblock %}

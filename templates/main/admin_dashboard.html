@@ -1,0 +1,73 @@
+{% extends 'main/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<h2 class="mb-4">Панель администратора</h2>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h3>Управление категориями</h3>
+                <a href="{% url 'category_management' %}" class="btn btn-primary">Управление категориями</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>Заявки пользователей</h3>
+        {% if requests %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Пользователь</th>
+                            <th>Название</th>
+                            <th>Описание</th>
+                            <th>Категория</th>
+                            <th>Статус</th>
+                            <th>Дата</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in requests %}
+                            <tr>
+                                <td>{{ request.user.username }}</td>
+                                <td>{{ request.title }}</td>
+                                <td>{{ request.description|truncatechars:50 }}</td>
+                                <td>{{ request.category.name }}</td>
+                                <td>
+                                    <span class="badge badge-{% if request.status == 'new' %}primary{% elif request.status == 'solved' %}success{% else %}danger{% endif %}">
+                                        {{ request.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>{{ request.created_date|date:"d.m.Y" }}</td>
+                                <td>
+                                    {% if request.status == 'new' %}
+                                        <form method="POST" class="d-inline" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="request_id" value="{{ request.id }}">
+                                            <select name="status" class="form-control form-control-sm d-inline-block w-auto mr-2">
+                                                <option value="solved">Решена</option>
+                                                <option value="rejected">Отклонена</option>
+                                            </select>
+                                            <input type="file" name="after_image" class="form-control-file d-inline-block w-auto mr-2" accept="image/*">
+                                            <input type="text" name="rejection_reason" class="form-control form-control-sm d-inline-block w-auto mr-2" placeholder="Причина отказа">
+                                            <button type="submit" class="btn btn-primary btn-sm">Обновить</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">Нет заявок для обработки.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
