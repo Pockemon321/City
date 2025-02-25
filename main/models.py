@@ -1,8 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.validators import FileExtensionValidator
+from django.core.exceptions import ValidationError
+import os
 
-# Create your models here.
+def validate_image_file(value):
+    ext = os.path.splitext(value.name)[1]
+    valid_extensions = ['.jpg', '.jpeg', '.png', '.gif']
+    if not ext.lower() in valid_extensions:
+        raise ValidationError('Поддерживаются только изображения (jpg, jpeg, png, gif)')
+    if value.size > 10 * 1024 * 1024:  # 10MB
+        raise ValidationError('Размер файла не должен превышать 10MB')
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -28,14 +35,14 @@ class Request(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория', null=True)
     before_image = models.ImageField(
         upload_to='problem_images/',
-        validators=[FileExtensionValidator(['jpg', 'jpeg', 'png', 'bmp'])],
+        validators=[validate_image_file],
         verbose_name='Фото проблемы',
         null=True,
         blank=True
     )
     after_image = models.ImageField(
         upload_to='solved_images/',
-        validators=[FileExtensionValidator(['jpg', 'jpeg', 'png', 'bmp'])],
+        validators=[validate_image_file],
         null=True,
         blank=True,
         verbose_name='Фото решения'
