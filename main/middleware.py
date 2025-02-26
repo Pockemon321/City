@@ -16,4 +16,5 @@ class LoginRateThrottlingMiddleware:
             
             cache.set(key, attempts + 1, 300)  # Блокировка на 5 минут
 
-        return self.get_response(request)
+        response = self.get_response(request)
+        return response
