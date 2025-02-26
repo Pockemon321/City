@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сделаем лучше вместе! - Главная</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="index.html" class="logo">
+                <img src="images/logo.png" alt="Логотип">
+                <span>Сделаем лучше вместе!</span>
+            </a>
+            <div class="nav-links">
+                <a href="login.html" class="btn">Войти</a>
+                <a href="register.html" class="btn btn-primary">Регистрация</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1>Решённые проблемы города</h1>
+        <div class="request-grid">
+            <!-- Пример карточки решённой проблемы -->
+            <article class="request-card">
+                <img src="images/example1.jpg" alt="До ремонта" class="request-image">
+                <div class="request-content">
+                    <h2 class="request-title">Ремонт дороги на ул. Ленина</h2>
+                    <span class="request-status status-solved">Решено</span>
+                    <p>Была отремонтирована дорога протяженностью 500 метров, устранены все ямы и выбоины.</p>
+                    <time datetime="2025-02-20">20 февраля 2025</time>
+                </div>
+            </article>
+
+            <!-- Добавьте больше карточек по аналогии -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Сделаем лучше вместе! Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
